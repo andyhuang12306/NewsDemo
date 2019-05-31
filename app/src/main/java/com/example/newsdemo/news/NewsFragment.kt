@@ -14,7 +14,17 @@ import com.example.newsdemo.R
 import com.example.newsdemo.data.News
 import com.example.newsdemo.databinding.NewsFragmentBinding
 
-class NewsFragment : Fragment(), View.OnClickListener {
+class NewsFragment : Fragment(), View.OnClickListener, OnRightClickListener {
+
+    override fun onRightClick(position: Int) {
+        if(!readNews.isNullOrEmpty()&&position<readNews.size){
+            val removeAt = readNews.filterIndexed{index, i->
+                index!=position
+            }
+            readNews= removeAt as ArrayList<News>
+            viewDataBinding.viewmodel?.addReadNews(removeAt)
+        }
+    }
 
     private lateinit var viewDataBinding: NewsFragmentBinding
     private var readNews: ArrayList<News> = arrayListOf()
@@ -73,7 +83,7 @@ class NewsFragment : Fragment(), View.OnClickListener {
         if (viewDataBinding.viewmodel != null)
             viewDataBinding.newsList.adapter = NewsViewAdapter(viewDataBinding.viewmodel!!.items.value, this)
 
-        viewDataBinding.newsList.addOnItemTouchListener(MyOnItemTouchListener(viewDataBinding, MyOnRightClickListener(viewDataBinding.viewmodel, readNews)))
+        viewDataBinding.newsList.addOnItemTouchListener(MyOnItemTouchListener(viewDataBinding, this))
     }
 
     private fun setupRefreshLayout() {
@@ -92,16 +102,6 @@ class NewsFragment : Fragment(), View.OnClickListener {
     }
 }
 
-class MyOnRightClickListener(private val viewModel: NewsViewModel?, private val readNewsList: ArrayList<News>) : OnRightClickListener {
-
-    override fun onRightClick(position: Int) {
-        if(!readNewsList.isNullOrEmpty()){
-            readNewsList.removeAt(position)
-            viewModel?.addReadNews(readNewsList)
-        }
-    }
-}
-
 @SuppressLint("StaticFieldLeak")
 class MyOnItemTouchListener(private val viewModel: NewsFragmentBinding, private val rightClickListener: OnRightClickListener) : RecyclerView.OnItemTouchListener {
 
@@ -111,6 +111,7 @@ class MyOnItemTouchListener(private val viewModel: NewsFragmentBinding, private 
     var yMove: Int = 0
     var touchSlop: Int = 100
     private var currentSelectPosition: Int = 0
+    private var lastSelectPosition: Int = 0
     var moveWidth: Int = 0
     var hiddenWidth: Int = 0
     var isFirst: Boolean = true
@@ -150,6 +151,7 @@ class MyOnItemTouchListener(private val viewModel: NewsFragmentBinding, private 
             }
         }
         lastItemLayout= currentItemLayout
+        lastSelectPosition=currentSelectPosition
     }
 
     private fun handleMoveEvent(rv: RecyclerView, e: MotionEvent) {
@@ -194,22 +196,26 @@ class MyOnItemTouchListener(private val viewModel: NewsFragmentBinding, private 
 
         if(isFirst) isFirst=false
         else{
+
+            val item = rv.getChildAt(currentSelectPosition - firstVisibleItemPosition)
+
             if(lastItemLayout!=null&& moveWidth>0){
                 lastItemLayout?.scrollBy((0- moveWidth), 0)
                 hiddenWidth=0
                 moveWidth=0
-                rightClickListener?.onRightClick(currentSelectPosition)
             }
-        }
 
+            if(item!=null){
+                val viewHolder = rv.getChildViewHolder(item)
+                currentItemLayout = viewHolder.itemView as LinearLayout
 
-        val item = rv.getChildAt(currentSelectPosition - firstVisibleItemPosition)
-        if(item!=null){
-            val viewHolder = rv.getChildViewHolder(item)
-            currentItemLayout = viewHolder.itemView as LinearLayout
+                val llHidenView = currentItemLayout?.findViewById<LinearLayout>(R.id.llHidden)
 
-            val llHidenView = currentItemLayout?.findViewById<LinearLayout>(R.id.llHidden)
-            hiddenWidth= llHidenView?.width!!
+                if(xDown>817&&yDown<((lastSelectPosition+1)*146)&&yDown>(lastSelectPosition*146)){
+                    rightClickListener.onRightClick(lastSelectPosition)
+                }
+                hiddenWidth= llHidenView?.width!!
+            }
         }
     }
 

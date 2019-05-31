@@ -83,10 +83,6 @@ class NewsViewModel(
 
     }
 
-    fun loadReadAlreadyNews() {
-
-    }
-
 
     @SuppressLint("CheckResult")
     fun loadAllNews(showLoadingUI: Boolean, page: Int) {

@@ -36,7 +36,6 @@ class NewsViewAdapter(private var newsList: List<News>?, private var listener: V
             }catch (e: Exception){
 
             }
-
         }
 
         return viewHolder
