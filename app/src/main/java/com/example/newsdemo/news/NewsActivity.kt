@@ -1,12 +1,12 @@
-package com.example.newsdemo
+package com.example.newsdemo.news
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-import com.example.newsdemo.news.NewsFragment
-import com.example.newsdemo.news.NewsViewModel
+import com.example.newsdemo.R
+import com.example.newsdemo.ViewModelFactory
 
-class MainActivity : AppCompatActivity() {
+class NewsActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

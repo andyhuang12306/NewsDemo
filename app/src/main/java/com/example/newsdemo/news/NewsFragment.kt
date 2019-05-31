@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newsdemo.MainActivity
 import com.example.newsdemo.R
 import com.example.newsdemo.data.News
 import com.example.newsdemo.databinding.NewsFragmentBinding
@@ -25,7 +24,7 @@ class NewsFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
         viewDataBinding = NewsFragmentBinding.inflate(inflater, container, false).apply {
-            viewmodel = (activity as MainActivity).obtainViewModel()
+            viewmodel = (activity as NewsActivity).obtainViewModel()
         }
         setHasOptionsMenu(true)
         return viewDataBinding.root
@@ -96,12 +95,10 @@ class NewsFragment : Fragment(), View.OnClickListener {
 class MyOnRightClickListener(private val viewModel: NewsViewModel?, private val readNewsList: ArrayList<News>) : OnRightClickListener {
 
     override fun onRightClick(position: Int) {
-        if(!readNewsList.isNullOrEmpty()) readNewsList.removeAt(position)
-        val newsList = viewModel?.readNews?.value as ArrayList
-        if(newsList.isNullOrEmpty()) return
-        newsList.removeAt(position)
-        viewModel?.addReadNews(newsList)
-
+        if(!readNewsList.isNullOrEmpty()){
+            readNewsList.removeAt(position)
+            viewModel?.addReadNews(readNewsList)
+        }
     }
 }
 
@@ -112,9 +109,8 @@ class MyOnItemTouchListener(private val viewModel: NewsFragmentBinding, private 
     var yDown: Int = 0
     var xMove: Int = 0
     var yMove: Int = 0
-    var maxLength: Int = 0
     var touchSlop: Int = 100
-    var currentSelectPosition: Int = 0
+    private var currentSelectPosition: Int = 0
     var moveWidth: Int = 0
     var hiddenWidth: Int = 0
     var isFirst: Boolean = true
