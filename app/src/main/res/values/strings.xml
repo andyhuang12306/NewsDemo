@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">NewsDemo</string>
+    <string name="news_list_label_all">All News</string>
+    <string name="news_list_menu_label">News Menu</string>
+    <string name="news_list_label_read">Read Already News</string>
+    <string name="news_list_empty_note">No News Available</string>
 </resources>

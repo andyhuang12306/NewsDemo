@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <import type="androidx.core.content.ContextCompat"/>
+        <variable
+                name="FilterType"
+                type="com.example.newsdemo.news.NewsFilterType"/>
+
+        <variable
+                name="viewmodel"
+                type="com.example.newsdemo.news.NewsViewModel"/>
+
+    </data>
+
+    <com.example.newsdemo.ScrollChildSwipeRefreshLayout
+            app:refreshing="@{viewmodel.dataLoading}"
+            app:onRefreshListener="@{()->viewmodel.loadAllNews(true, 1)}"
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <RelativeLayout
+                android:id="@+id/tasksContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <LinearLayout
+                    android:id="@+id/tasksLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:id="@+id/filteringLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/list_item_padding"
+                        android:layout_marginRight="@dimen/list_item_padding"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:layout_marginBottom="@dimen/activity_vertical_margin"
+                        android:text="@{context.getString(viewmodel.currentFilteringLabel)}"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:visibility="@{viewmodel.isCurrentFilteringAll?(viewmodel.emptyAll?View.GONE : View.VISIBLE): (viewmodel.emptyReadAlready? View.GONE : View.VISIBLE)}"
+                        app:data="@{viewmodel.isCurrentFilteringAll? viewmodel.items:viewmodel.readNews}"
+                        android:id="@+id/news_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
+            <TextView
+                    android:id="@+id/noTasksMain"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/list_item_padding"
+                    android:text="@{context.getString(viewmodel.noNewsLabel)}"
+                    android:visibility="@{viewmodel.isCurrentFilteringAll?(viewmodel.emptyAll&amp;&amp;!viewmodel.dataLoading ? View.VISIBLE : View.GONE):(viewmodel.emptyReadAlready&amp;&amp;!viewmodel.dataLoading ? View.VISIBLE : View.GONE)}"/>
+
+        </RelativeLayout>
+    </com.example.newsdemo.ScrollChildSwipeRefreshLayout>
+</layout>
+
