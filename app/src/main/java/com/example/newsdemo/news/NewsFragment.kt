@@ -14,6 +14,8 @@ import com.example.newsdemo.R
 import com.example.newsdemo.data.News
 import com.example.newsdemo.databinding.NewsFragmentBinding
 
+
+
 class NewsFragment : Fragment(), View.OnClickListener, OnRightClickListener {
 
     private lateinit var viewDataBinding: NewsFragmentBinding
@@ -93,6 +95,7 @@ class NewsFragment : Fragment(), View.OnClickListener, OnRightClickListener {
             viewDataBinding.newsList.adapter = NewsViewAdapter(viewDataBinding.viewmodel!!.items.value, this)
 
         viewDataBinding.newsList.addOnItemTouchListener(MyOnItemTouchListener(viewDataBinding, this))
+        viewDataBinding.newsList.addOnScrollListener(scrollListener)
     }
 
     private fun setupRefreshLayout() {
@@ -109,6 +112,27 @@ class NewsFragment : Fragment(), View.OnClickListener, OnRightClickListener {
     companion object {
         fun newInstance() = NewsFragment()
     }
+
+    var scrollListener: RecyclerView.OnScrollListener=object :RecyclerView.OnScrollListener() {
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            val lm = recyclerView.layoutManager as LinearLayoutManager
+            val totalItemCount = recyclerView.adapter?.itemCount
+            val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
+            val visibleItemCount = recyclerView.childCount
+
+            if (newState === RecyclerView.SCROLL_STATE_IDLE
+                && lastVisibleItemPosition == (totalItemCount?.minus(1))
+                && visibleItemCount > 0
+            ) {
+                if(totalItemCount%20==0){
+                    viewDataBinding.viewmodel?.loadAllNews(false, totalItemCount/20+1)
+                }
+            }
+        }
+    }
+
 }
 
 @SuppressLint("StaticFieldLeak")

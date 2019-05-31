@@ -79,10 +79,6 @@ class NewsViewModel(
         _noNewsLabel.value = noNewsLabelString
     }
 
-    fun removeReadNews() {
-
-    }
-
 
     @SuppressLint("CheckResult")
     fun loadAllNews(showLoadingUI: Boolean, page: Int) {
@@ -95,9 +91,17 @@ class NewsViewModel(
             .subscribe({ data ->
                 _dataLoading.value = false
                 if (data.status == "ok" && data.articles.isNotEmpty()) {
-                    _items.value = data.articles
+                    if (page == 1)
+                        _items.value = data.articles
+                    else{
+                        val list = _items.value
+                        val resultList = list?.plus(data.articles)
+                        _items.value=resultList
+                    }
                 } else {
-                    _items.value = emptyList()
+                    if (page == 1)
+                        _items.value = emptyList()
+                    else{}
                 }
             }, { error ->
                 _dataLoading.value = false
@@ -109,12 +113,12 @@ class NewsViewModel(
     fun addReadNews(news: List<News>) {
         _dataLoading.value = true
         val copyList = arrayListOf<News>()
-        for(n in news){
+        for (n in news) {
             try {
                 val copy = n.copy()
-                copy.readAlready=true
+                copy.readAlready = true
                 copyList.add(copy)
-            }catch (e: Exception){
+            } catch (e: Exception) {
 
             }
 
