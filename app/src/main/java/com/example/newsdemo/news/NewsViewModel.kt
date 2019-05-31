@@ -115,8 +115,7 @@ class NewsViewModel(
         val copyList = arrayListOf<News>()
         for (n in news) {
             try {
-                val copy = n.copy()
-                copy.readAlready = true
+                val copy = News(n.title, "", "", true, "")
                 copyList.add(copy)
             } catch (e: Exception) {
 
