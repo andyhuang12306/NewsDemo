@@ -223,7 +223,7 @@ class MyOnItemTouchListener(
         val count = rv.childCount
         for (i in 0..count) {
             val child = rv.getChildAt(i)
-            child.getHitRect(rect)
+            child?.getHitRect(rect)
             if (rect.contains(xDown, yDown)) {
                 currentSelectPosition = firstVisibleItemPosition + i
                 break
@@ -234,6 +234,8 @@ class MyOnItemTouchListener(
         else {
 
             val item = rv.getChildAt(currentSelectPosition - firstVisibleItemPosition)
+            val width = item.width
+            val height = item.height
 
             if (lastItemLayout != null && moveWidth > 0) {
                 lastItemLayout?.scrollBy((0 - moveWidth), 0)
@@ -246,8 +248,12 @@ class MyOnItemTouchListener(
                 currentItemLayout = viewHolder.itemView as LinearLayout
 
                 val llHidenView = currentItemLayout?.findViewById<LinearLayout>(R.id.llHidden)
+                val itemContainer = currentItemLayout?.findViewById<LinearLayout>(R.id.itemContainer)
+                val width1 = llHidenView?.width
+                val x = llHidenView?.left
+                val right = itemContainer?.right
 
-                if (xDown > 817 && yDown < ((lastSelectPosition + 1) * 146) && yDown > (lastSelectPosition * 146)) {
+                if (xDown > (width- width1!!) && yDown < ((lastSelectPosition + 1) * height) && yDown > (lastSelectPosition * height)&&hiddenWidth==0) {
                     rightClickListener.onRightClick(lastSelectPosition)
                 }
                 hiddenWidth = llHidenView?.width!!
