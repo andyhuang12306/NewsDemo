@@ -17,9 +17,7 @@ class RetrofitServiceManager private constructor() {
         val builder = OkHttpClient.Builder()
         builder.connectTimeout(TIME_OUT.toLong(), TimeUnit.SECONDS)
         builder.readTimeout(TIME_OUT.toLong(), TimeUnit.SECONDS)
-        if (cachPath!!.isFile) {
-            builder.cache(Cache(cachPath!!, CACHESIZE))
-        }
+        builder.cache(Cache(cachPath!!, CACHESIZE))
         builder.addNetworkInterceptor { chain ->
             val originalResponse = chain.proceed(chain.request())
             val cacheControl = originalResponse.header("Cache-Control")
